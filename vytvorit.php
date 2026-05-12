@@ -1,39 +1,50 @@
-<!-- <?php
-session_start();
- if (!isset($_SESSION["user_id"])) {
-    header("Location: login.html");
- }
-
-
-
-
-?> -->
-
-
 <?php
-session_start();
-
-
 $correct_username = "admin";
-$correct_password = "1234";
-
+$correct_password = "admin";
 $error = "";
+$logged_in = false; // dočasné přihlášení jen pro aktuální request
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    if ($username == $correct_username && $password == $correct_password) {
-
-        $_SESSION["loggedin"] = true;
-        $_SESSION["username"] = $username;
-
-        header("Location: dashboard.php");
-        exit();
-
+    if ($username === $correct_username && $password === $correct_password) {
+        $logged_in = true; // dočasně přihlášený
     } else {
         $error = "Špatné jméno nebo heslo!";
     }
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+
+<?php
+if (!empty($error)) {
+    echo "<p style='color:red;'>$error</p>";
+}
+
+if ($logged_in) {
+    echo "<p>Jsi přihlášený! (ale po refreshi už nebudeš)</p>";
+} else {
+?>
+    <form method="post">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+<?php
+}
+?>
+
+</body>
+</html>
